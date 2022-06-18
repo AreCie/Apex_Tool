@@ -1,6 +1,8 @@
 ﻿# Apex_Tool  APEX英雄QQBot信息查询
  用于[绪山真寻Bot](https://github.com/HibiKier/zhenxun_bot)
  
+# 注意！追踪器汉化只是试验阶段，如果有不正确或者未显示汉化的，及时提出，谢谢。
+ 
 # 目前功能及对应命令
  **查询地图轮换**：【a地图】
  
