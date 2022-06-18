@@ -69,3 +69,10 @@ def writeEAID(js):
     json.dump(js, target_file)
     target_file.close()
     return
+
+
+def isHasKey(key, dic):
+    for d in dic:
+        if d.lower() in key.lower():
+            return True, dic[d]
+    return False, ""
