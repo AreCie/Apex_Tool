@@ -21,7 +21,7 @@
 ![O@H%0E}Y8A%ML @{HTT)RQN](https://user-images.githubusercontent.com/41849402/170845813-09872adb-3458-41fc-b854-e441e943e030.png)
 
 # 使用方法
-1、先将该插件下载下来
+1、先将该插件下载下来,将文件夹名字改为【Apex_Tool】
 
 2、访问这个网站 https://portal.apexlegendsapi.com/ 获取token
 
@@ -33,5 +33,6 @@
 
 6、重启[绪山真寻Bot](https://github.com/HibiKier/zhenxun_bot)即可
 
+注意: 文件夹的名字一定要是【Apex_Tool】
 # 题外话
 因本人主修C#，Python只有自学的程度，某些地方写的可能没那么完美，有能力的可以自己优化下，就这样
