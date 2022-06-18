@@ -258,8 +258,8 @@ async def _(bot: Bot, event: Event, text: Message = CommandArg()):
         lengData = legends["data"]
         for i, dat in enumerate(lengData):
             y = 120 + (i * 75)
-            addText(img, 30, f"{dat['name']}：", 100, y)
-            addText(img, 30, str(dat["value"]), 500, y + 35)
+            addText(img, 30, f"{isHasKey(dat['name'],Tracker)[1] if isHasKey(dat['name'],Tracker)[0] else dat['name']}：", 100, y)
+            addText(img, 30, str(dat["value"]), 500, y)
 
         icoPimgh = Image.open(iconPath).convert("RGBA")
         rankPimgh = Image.open(rankPimg).convert("RGBA")
