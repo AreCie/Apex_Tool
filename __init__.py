@@ -47,6 +47,8 @@ async def _(bot: Bot, event: MessageEvent, state: T_State):
     for data in retdata:
         if data == "control":
             continue
+        if data == "ltm":
+            continue
         current = retdata[data]["current"]
         nextmap = retdata[data]["next"]
 
