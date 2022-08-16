@@ -1,9 +1,25 @@
-﻿# Apex_Tool  APEX英雄QQBot信息查询
+﻿[![OSCS Status](https://www.oscs1024.com/platform/badge/AreCie/Apex_Tool.svg?size=large)](https://www.oscs1024.com/project/AreCie/Apex_Tool?ref=badge_large)
+# Apex_Tool  APEX英雄QQBot信息查询
  用于[绪山真寻Bot](https://github.com/HibiKier/zhenxun_bot)
+
+# 更新日志
+
+### 2022/8/16
+优化代码逻辑，对图片进行压缩，提升处理、响应速度，部分追踪器汉化修正。
+
+# 关于追踪器汉化
+追踪器汉化只是试验阶段，如果有不正确或者未显示汉化的，及时提出，谢谢。
  
+# 关于图片资源
+所用到的图片素材都是下载自接口，因为接口是国外的，所以国内部署的QQBot使用的话，下载会很慢，具体表现为查询时等待时间过长，但第二次同样内容的查询会比之前快很多。
+
+所以为了提高体验效果，我这里提供了部分处理好的图片素材，用的你们最爱的蓝奏云，下载后直接覆盖到Assets文件夹里即可。
+
+下载地址：[点我下载](https://wws.lanzoub.com/i6GgY09mpa4b)
+
 # 目前功能及对应命令
  **查询地图轮换**：【a地图】
- 
+
  **查询制造轮换**：【a制造】
  
  **查询猎杀信息**：【a猎杀】
@@ -21,7 +37,7 @@
 ![O@H%0E}Y8A%ML @{HTT)RQN](https://user-images.githubusercontent.com/41849402/170845813-09872adb-3458-41fc-b854-e441e943e030.png)
 
 # 使用方法
-1、先将该插件下载下来
+1、先将该插件下载下来,将文件夹名字改为【Apex_Tool】
 
 2、访问这个网站 https://portal.apexlegendsapi.com/ 获取token
 
@@ -33,5 +49,6 @@
 
 6、重启[绪山真寻Bot](https://github.com/HibiKier/zhenxun_bot)即可
 
+注意: 文件夹的名字一定要是【Apex_Tool】
 # 题外话
 因本人主修C#，Python只有自学的程度，某些地方写的可能没那么完美，有能力的可以自己优化下，就这样
