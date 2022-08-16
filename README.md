@@ -47,6 +47,20 @@
 
 5、将改好的插件放到[绪山真寻Bot](https://github.com/HibiKier/zhenxun_bot)的【plugins】文件夹下
 
+6、在虚拟环境下安装该插件的依赖文件【requirements.txt】，安装方法：
+
+```shell
+pip install -r [插件路径]/requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+```
+
+也可以直接用下面这条命令安装：
+```shell
+pip install opencv_python Pillow requests -i https://pypi.tuna.tsinghua.edu.cn/simple
+```
+
+主要就是安装三个依赖：``opencv_python``、``Pillow``、``requests``
+
+
 6、重启[绪山真寻Bot](https://github.com/HibiKier/zhenxun_bot)即可
 
 注意: 文件夹的名字一定要是【Apex_Tool】
