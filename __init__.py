@@ -39,28 +39,36 @@ apexbind = on_command("a绑定", priority=5, block=True)
 
 
 async def GetData(bot: Bot, url: str):
-    resp = None
+    # resp = None
+    text = None
     isSucc = False
+
     try:
-        resp = requests.post(url, timeout=(20, 5))
-        code = resp.status_code
-        if code == 200:
-            isSucc = True
-            logger.info(f'获取【{url}】数据成功')
-        else:
+        res = await AsyncHttpx.post(url, timeout=60)
+        print(res.is_error)
+        if res.is_error:
+            code = res.status_code
             if code == 400 or code == 405:
                 await bot.send("API出错啦，请稍后再试")
-            if code == 403:
+            elif code == 403:
                 await bot.send("API密钥错误，请重新配置")
-            if code == 404:
+            elif code == 404:
                 await bot.send("该玩家不存在")
-            if code == 429:
+            elif code == 429:
                 await bot.send("API查询频繁(目前每秒可请求2次)，再试一次吧")
-            if code == 500:
+            elif code == 500:
                 await bot.send("API内部错误(不是插件的锅!!!)")
+            else:
+                await bot.send(f"API请求出错，错误码{code}")
+        else:
+            isSucc = True
+            text = res.text
+            logger.info(f'获取【{url}】数据成功')
     except Exception as e:
-        await bot.send(f"API连接超时")
-    return resp.text, isSucc
+        isSucc = False
+        await bot.send(f"API请求出错，请稍后再试吧>w<")
+        logger.error(f"Apex_Tool访问接口错误 {type(e)}：{e}")
+    return text, isSucc
 
 
 @apexdt.handle()
@@ -76,7 +84,7 @@ async def _(bot: Bot, event: MessageEvent, state: T_State):
             current = dat["current"]  # 当前地图
             nextmap = dat["next"]  # 下一地图
 
-            isHasImg(f"{Map_Path}/{current['code']}.jpg", current["asset"])  # 当前地图图片
+            await isHasImg(f"{Map_Path}/{current['code']}.jpg", current["asset"])  # 当前地图图片
 
             im = Image.open(f"{Map_Path}/{current['code']}.jpg")
             x, y = im.size
@@ -125,7 +133,7 @@ async def _(bot: Bot, event: MessageEvent, state: T_State):
         image = Image.new('RGB', (800, 800), (255, 255, 255))
         for i, item in enumerate(items):
             localImg = f"{Make_Path}/{item['name']}.jpg"
-            isHasImg(localImg, item["asset"])
+            await isHasImg(localImg, item["asset"])
             im = Image.open(localImg)
             im = im.resize((400, 400), Image.ANTIALIAS)
             image.paste(im, (400 if bool(i & 1) else 0, 400 if i > 1 else 0))
@@ -238,7 +246,7 @@ async def _(bot: Bot, event: Event, text: Message = CommandArg()):
                 rankImg = rank["rankImg"]
 
                 rimgPath = f"{Rank_Path}/{rankName}{rankDiv}.png"
-                isHasImg(rimgPath, rankImg)
+                await isHasImg(rimgPath, rankImg)
                 rimgdraw = Image.open(rimgPath).convert("RGBA")
                 rimgdraw = rimgdraw.resize((250, 250), Image.ANTIALIAS)
                 rimgdraw.save(rimgPath)
@@ -264,7 +272,7 @@ async def _(bot: Bot, event: Event, text: Message = CommandArg()):
             LegendName = legends["LegendName"]
             icon = legends["ImgAssets"]["icon"]
             iconPath = f"{Legend_Path}/{LegendName}.png"
-            if not isHasImg(iconPath, icon):
+            if not (await isHasImg(iconPath, icon)):
                 nopic = Image.open(f"{Template_Path}/nopic.png")
                 await addText(nopic, 50, Legend_Dict[LegendName] if LegendName in Legend_Dict else LegendName, 230, 150,
                               (0, 0, 0))

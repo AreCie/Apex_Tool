@@ -7,6 +7,7 @@ from pathlib import Path
 import os
 import cv2
 from .config import *
+from utils.http_utils import AsyncHttpx
 
 
 async def addText(img, size, text, x, y, color=(255, 255, 255)):
@@ -38,9 +39,9 @@ def progressBar(img, bgcolor, color, x, y, w, h, progress):
     # im.save(imgPath)
 
 
-def isHasImg(path, url):
+async def isHasImg(path, url):
     if not os.path.lexists(path):
-        img = requests.get(url)
+        img = await AsyncHttpx.get(url)
         if img.status_code == 200:
             with open(path, 'wb') as f:
                 f.write(img.content)
