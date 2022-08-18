@@ -1,6 +1,6 @@
 ﻿[![OSCS Status](https://www.oscs1024.com/platform/badge/AreCie/Apex_Tool.svg?size=large)](https://www.oscs1024.com/project/AreCie/Apex_Tool?ref=badge_large)
 # Apex_Tool  APEX英雄QQBot信息查询
- 适用用于[绪山真寻Bot](https://github.com/HibiKier/zhenxun_bot) ，``nonebot2``使用的话，需要稍加更改，可以参考这个[nonebot2 中使用该插件](https://github.com/AreCie/Apex_Tool/issues/9#issuecomment-1218910846)
+ 适用于[绪山真寻Bot](https://github.com/HibiKier/zhenxun_bot) ，``nonebot2``使用的话，需要稍加更改，可以参考这个[nonebot2 中使用该插件](https://github.com/AreCie/Apex_Tool/issues/9#issuecomment-1218910846)
 
 # 更新日志
 
