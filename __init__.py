@@ -3,15 +3,11 @@ from nonebot.typing import T_State
 from nonebot.params import State, CommandArg, ArgStr
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, Message, Event
 from services.log import logger
-from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 from utils.http_utils import AsyncHttpx
-import os
 from .config import *
 from .utils import *
 import json
-import requests
-import cv2
 
 __zx_plugin_name__ = "APEX查询工具"
 __plugin_usage__ = """
@@ -39,35 +35,27 @@ apexbind = on_command("a绑定", priority=5, block=True)
 
 
 async def GetData(bot: Bot, url: str):
-    # resp = None
     text = None
     isSucc = False
 
     try:
         res = await AsyncHttpx.post(url, timeout=60)
-        print(res.is_error)
+        code = res.status_code
+        logger.info(f'请求{url}时返回的状态码:【{code}】')
         if res.is_error:
-            code = res.status_code
-            if code == 400 or code == 405:
-                await bot.send("API出错啦，请稍后再试")
-            elif code == 403:
-                await bot.send("API密钥错误，请重新配置")
-            elif code == 404:
-                await bot.send("该玩家不存在")
-            elif code == 429:
-                await bot.send("API查询频繁(目前每秒可请求2次)，再试一次吧")
-            elif code == 500:
-                await bot.send("API内部错误(不是插件的锅!!!)")
-            else:
-                await bot.send(f"API请求出错，错误码{code}")
+            await bot.send(f"API请求出错，请稍后再试吧>w<")
         else:
-            isSucc = True
-            text = res.text
-            logger.info(f'获取【{url}】数据成功')
+            if code == 200:
+                isSucc = True
+                text = res.text
+                logger.info(f'获取【{url}】数据成功')
+            else:
+                await bot.send(f"API请求出错，状态码{code}")
     except Exception as e:
         isSucc = False
         await bot.send(f"API请求出错，请稍后再试吧>w<")
         logger.error(f"Apex_Tool访问接口错误 {type(e)}：{e}")
+
     return text, isSucc
 
 

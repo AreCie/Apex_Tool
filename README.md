@@ -1,13 +1,16 @@
 ﻿[![OSCS Status](https://www.oscs1024.com/platform/badge/AreCie/Apex_Tool.svg?size=large)](https://www.oscs1024.com/project/AreCie/Apex_Tool?ref=badge_large)
 # Apex_Tool  APEX英雄QQBot信息查询
- 用于[绪山真寻Bot](https://github.com/HibiKier/zhenxun_bot)
+ 适用用于[绪山真寻Bot](https://github.com/HibiKier/zhenxun_bot) ，``nonebot2``使用的话，需要稍加更改，可以参考这个[nonebot2 中使用该插件](https://github.com/AreCie/Apex_Tool/issues/9#issuecomment-1218910846)
 
 # 更新日志
 
-### 2022/8/17   v1.1.0
+### 2022/08/18  v1.2.0
+优化代码，去除无用的依赖，去除有问题的状态码判断(官方文档提供的状态码和说明有偏差，索性直接去掉判断)，调整说明文档
+
+### 2022/08/17  v1.1.0
 修复使用代理时造成的错误
 
-### 2022/8/16
+### 2022/08/16  v1.0.0
 优化代码逻辑，对图片进行压缩，提升处理、响应速度，部分追踪器汉化修正。
 
 # 关于追踪器汉化
@@ -18,7 +21,7 @@
 
 所以为了提高体验效果，我这里提供了部分处理好的图片素材，用的你们最爱的蓝奏云，下载后直接覆盖到Assets文件夹里即可。
 
-下载地址：[点我下载](https://wws.lanzoub.com/i6GgY09mpa4b)
+下载地址：[点我下载](https://wws.lanzoub.com/iKHhp09sr80d)
 
 # 目前功能及对应命令
  **查询地图轮换**：【a地图】
@@ -58,10 +61,12 @@ pip install -r [插件路径]/requirements.txt -i https://pypi.tuna.tsinghua.edu
 
 也可以直接用下面这条命令安装：
 ```shell
-pip install opencv_python Pillow requests -i https://pypi.tuna.tsinghua.edu.cn/simple
+pip install opencv_python Pillow -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
 
-主要就是安装三个依赖：``opencv_python``、``Pillow``、``requests``
+主要就是安装两个依赖：```opencv-python #cv2```、```Pillow #PIL```
+
+(```opencv-python #cv2```安装``真寻Bot``时在安装依赖那步好像有安装，不太确定。)
 
 
 6、重启[绪山真寻Bot](https://github.com/HibiKier/zhenxun_bot)即可

@@ -1,6 +1,4 @@
-import requests
 import json
-import aiofiles
 from PIL import Image, ImageDraw, ImageFont
 from nonebot.log import logger
 from pathlib import Path
@@ -41,19 +39,20 @@ def progressBar(img, bgcolor, color, x, y, w, h, progress):
 
 async def isHasImg(path, url):
     if not os.path.lexists(path):
+        logger.info(f'图片【{path}】不存在，将从【{url}】下载')
         img = await AsyncHttpx.get(url)
         if img.status_code == 200:
             with open(path, 'wb') as f:
                 f.write(img.content)
                 f.close()
-                print(f"保存成功{path}")
+                logger.info(f"保存成功【{path}】")
             if path.rsplit(".", 1)[1] == "jpg":
                 img = cv2.imread(path, 1)
                 cv2.imwrite(path, img, [cv2.IMWRITE_JPEG_QUALITY, 30])
         else:
             return False
     else:
-        print(f"已有{path}")
+        logger.info(f"已有图片【{path}】")
     return True
 
 
