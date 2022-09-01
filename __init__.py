@@ -1,7 +1,7 @@
 from nonebot import on_command
 from nonebot.typing import T_State
 from nonebot.params import State, CommandArg, ArgStr
-from nonebot.adapters.onebot.v11 import Bot, MessageEvent, Message, Event
+from nonebot.adapters.onebot.v11 import Bot, MessageEvent, Message, Event, PrivateMessageEvent, GroupMessageEvent
 from services.log import logger
 from PIL import Image, ImageDraw, ImageFont
 from utils.http_utils import AsyncHttpx
@@ -59,6 +59,15 @@ async def GetData(bot: Bot, url: str):
     return text, isSucc
 
 
+async def SendMsg(bot: Bot, event, msg):
+    if isinstance(event, PrivateMessageEvent):
+        await bot.send_private_msg(user_id=event.user_id, message=msg)
+    elif isinstance(event, GroupMessageEvent):
+        await bot.send_group_msg(group_id=event.group_id, message=msg)
+    else:
+        bot.send(msg)
+
+
 @apexdt.handle()
 async def _(bot: Bot, event: MessageEvent, state: T_State):
     url = f"https://api.mozambiquehe.re/maprotation?auth={Tool_Token}&version=1"
@@ -103,9 +112,11 @@ async def _(bot: Bot, event: MessageEvent, state: T_State):
         msg = f"[CQ:image,file={image_file}]"
         try:
             logger.info(f"发送地图【{tmpMapPath}】")
-            await bot.send_group_msg(group_id=event.group_id, message=msg)
+            await SendMsg(bot, event, msg)
+            # await bot.send_group_msg(group_id=event.group_id, message=msg)
         except Exception as e:
-            await bot.send_group_msg(group_id=event.group_id, message=f"出错啦!\n错误信息：{e}")
+            # await bot.send_group_msg(group_id=event.group_id, message=f"出错啦!\n错误信息：{e}")
+            await SendMsg(bot, event, f"出错啦!\n错误信息：{e}")
             logger.info(e)
 
 
@@ -132,9 +143,11 @@ async def _(bot: Bot, event: MessageEvent, state: T_State):
         image_file = f"file:///{Temp_Path}/mark_ok.jpg"
         msg = f"[CQ:image,file={image_file}]"
         try:
-            await bot.send_group_msg(group_id=event.group_id, message=msg)
+            # await bot.send_group_msg(group_id=event.group_id, message=msg)
+            await SendMsg(bot, event, msg)
         except Exception as e:
-            await bot.send_group_msg(group_id=event.group_id, message=f"出错啦!\n错误信息：{e}")
+            # await bot.send_group_msg(group_id=event.group_id, message=f"出错啦!\n错误信息：{e}")
+            await SendMsg(bot, event, f"出错啦!\n错误信息：{e}")
             logger.info(e)
 
 
@@ -161,9 +174,11 @@ async def _(bot: Bot, event: MessageEvent, state: T_State):
             ls.save(f"{Temp_Path}/ls_ok.jpg")
             image_file = f"file:///{Temp_Path}/ls_ok.jpg"
             msg = f"[CQ:image,file={image_file}]"
-            await bot.send_group_msg(group_id=event.group_id, message=msg)
+            # await bot.send_group_msg(group_id=event.group_id, message=msg)
+            await SendMsg(bot, event, msg)
         except Exception as e:
-            await bot.send_group_msg(group_id=event.group_id, message=f"出错啦!\n错误信息：{e}")
+            # await bot.send_group_msg(group_id=event.group_id, message=f"出错啦!\n错误信息：{e}")
+            await SendMsg(bot, event, f"出错啦!\n错误信息：{e}")
             logger.info(e)
 
 
@@ -187,7 +202,7 @@ async def _(bot: Bot, event: Event, text: Message = CommandArg()):
             writeEAID(QQ_EA)
             await apexbind.send(f'成功将【{QQ}】与【{EA_ID}】绑定！')
         except Exception as e:
-            await bot.send_group_msg(group_id=event.group_id, message=f"出错啦!\n错误信息：{e}")
+            await bot.send(f"出错啦!\n错误信息：{e}")
             logger.info(e)
 
 
@@ -287,7 +302,9 @@ async def _(bot: Bot, event: Event, text: Message = CommandArg()):
             img.save(f"{Temp_Path}/{uid}_info.jpg")
             image_file = f"file:///{Temp_Path}/{uid}_info.jpg"
             msg = f"[CQ:image,file={image_file}]"
-            await bot.send_group_msg(group_id=event.group_id, message=msg)
+            # await bot.send_group_msg(group_id=event.group_id, message=msg)
+            await SendMsg(bot, event, msg)
         except Exception as e:
-            await bot.send_group_msg(group_id=event.group_id, message=f"出错啦!\n错误信息：{e}")
+            # await bot.send_group_msg(group_id=event.group_id, message=f"出错啦!\n错误信息：{e}")
+            await SendMsg(bot, event, f"出错啦!\n错误信息：{e}")
             logger.info(e)
