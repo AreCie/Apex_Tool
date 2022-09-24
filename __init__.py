@@ -39,16 +39,24 @@ async def GetData(bot: Bot, url: str):
     isSucc = False
 
     try:
-        res = await AsyncHttpx.post(url, timeout=60)
+        res = await AsyncHttpx.post(url, timeout=180)
         code = res.status_code
         logger.info(f'请求{url}时返回的状态码:【{code}】')
         if res.is_error:
             await bot.send(f"API请求出错，请稍后再试吧>w<")
         else:
             if code == 200:
-                isSucc = True
-                text = res.text
                 logger.info(f'获取【{url}】数据成功')
+                tempJson = json.loads(res.text)
+                if 'Error' in tempJson:
+                    logger.info(f'错误数据：{tempJson}')
+                    if 'Player' in tempJson['Error'] and 'not found' in tempJson['Error']:
+                        await bot.send(f"未找到该玩家信息，请检查烂橘子ID的正确性")
+                    else:
+                        await bot.send(f"API请求出错，错误下信息：{tempJson['Error']}")
+                else:
+                    isSucc = True
+                    text = res.text
             else:
                 await bot.send(f"API请求出错，状态码{code}")
     except Exception as e:
