@@ -25,7 +25,7 @@ usage：
 """.strip()
 __plugin_des__ = "查询APEX地图轮换、制造机轮换、猎杀信息、玩家信息"
 __plugin_cmd__ = ["a地图", "a制造", "a猎杀", "a绑定 烂橘子ID", "a查询/a查询 [烂橘子ID]"]
-__plugin_version__ = 1.4
+__plugin_version__ = 1.5
 __plugin_author__ = "AreCie"
 __plugin_settings__ = {
     "cmd": ["派派", "派", "Apex", "apex", "APEX"]
