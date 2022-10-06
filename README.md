@@ -4,6 +4,11 @@
 
 # 更新日志
 
+### 2022/10/06  v1.4.0
+完善帮助文档，非首次安装用户，需删除真寻Bot``/data/configs``目录下``plugins2settings.yaml``文件中该查询的配置``Apex_Tool``
+
+帮助命令使用：艾特你的Bot，然后``帮助 [派派, 派, Apex, apex, APEX]``，中括号中任意一个即可，或者使用``派帮助/派命令/a帮助/a命令``其中任意一个即可
+
 ### 2022/09/25  v1.4.0
 增加对`没有找到玩家信息/烂橘子ID错误`时的判断，增长请求数据的超时时间
 
@@ -76,6 +81,8 @@ pip install opencv_python Pillow -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 
 6、重启[绪山真寻Bot](https://github.com/HibiKier/zhenxun_bot)即可
+
+帮助命令使用：艾特你的Bot，然后``帮助 [派派, 派, Apex, apex, APEX]``，中括号中任意一个即可，或者使用``派帮助/派命令/a帮助/a命令``其中任意一个即可
 
 注意: 文件夹的名字一定要是【Apex_Tool】
 # 题外话

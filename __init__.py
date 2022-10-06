@@ -14,17 +14,21 @@ __plugin_usage__ = """
 usage：
     查询APEX地图轮换、制造机轮换、猎杀信息、玩家信息
     指令：
-        a地图/a制造/a猎杀/a查询
+        a地图: 查询地图轮换
+        a制造: 查询复制器轮换
+        a猎杀: 查询当前赛季各平台猎杀信息
+        a查询: 查询绑定的[烂橘子ID]的玩家信息
+        a绑定 [烂橘子ID]: 将[烂橘子ID]与当前QQ绑定 
+        a查询 [烂橘子ID]: 查询[烂橘子ID]的玩家信息
+    注: 命令中的[烂橘子ID]使用时不带中括号，示例: a查询 ABC
+    查看此插件帮助: 派帮助/派命令/a帮助/a命令
 """.strip()
 __plugin_des__ = "查询APEX地图轮换、制造机轮换、猎杀信息、玩家信息"
-__plugin_cmd__ = ["a地图", "a制造", "a猎杀"]
-__plugin_version__ = 0.1
+__plugin_cmd__ = ["a地图", "a制造", "a猎杀", "a绑定 烂橘子ID", "a查询/a查询 [烂橘子ID]"]
+__plugin_version__ = 1.4
 __plugin_author__ = "AreCie"
 __plugin_settings__ = {
-    "level": 5,
-    "default_status": True,
-    "limit_superuser": False,
-    "cmd": ["a地图", "a制造", "a猎杀"],
+    "cmd": ["派派", "派", "Apex", "apex", "APEX"]
 }
 
 apexdt = on_command("a地图", priority=5, block=True)
@@ -32,6 +36,7 @@ apexzz = on_command("a制造", priority=5, block=True)
 apexls = on_command("a猎杀", priority=5, block=True)
 apexcx = on_command("a查询", priority=5, block=True)
 apexbind = on_command("a绑定", priority=5, block=True)
+apexhelp = on_command("派命令", aliases={"a帮助", "a命令", "派帮助"}, priority=5, block=True)
 
 
 async def GetData(bot: Bot, url: str):
@@ -316,3 +321,8 @@ async def _(bot: Bot, event: Event, text: Message = CommandArg()):
             # await bot.send_group_msg(group_id=event.group_id, message=f"出错啦!\n错误信息：{e}")
             await SendMsg(bot, event, f"出错啦!\n错误信息：{e}")
             logger.info(e)
+
+
+@apexhelp.handle()
+async def _(bot: Bot, event: Event):
+    await SendMsg(bot, event, __plugin_usage__)
