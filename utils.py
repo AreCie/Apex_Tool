@@ -74,13 +74,6 @@ def writeEAID(js):
     return
 
 
-def writeEAID(js):
-    target_file = open(Bind_EAID_JSON, 'w+')
-    json.dump(js, target_file)
-    target_file.close()
-    return
-
-
 def isHasKey(key, dic):
     for d in dic:
         if key and d.lower() in key.lower():
