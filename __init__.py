@@ -1,6 +1,5 @@
 from nonebot import on_command
-from nonebot.typing import T_State
-from nonebot.params import State, CommandArg, ArgStr
+from nonebot.params import CommandArg, ArgStr
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, Message, Event, PrivateMessageEvent, GroupMessageEvent
 from services.log import logger
 from PIL import Image, ImageDraw, ImageFont
@@ -82,7 +81,7 @@ async def SendMsg(bot: Bot, event, msg):
 
 
 @apexdt.handle()
-async def _(bot: Bot, event: MessageEvent, state: T_State):
+async def _(bot: Bot, event: MessageEvent):
     url = f"https://api.mozambiquehe.re/maprotation?auth={Tool_Token}&version=1"
     dataRet = await GetData(apexdt, url)
     if dataRet[1]:
@@ -134,7 +133,7 @@ async def _(bot: Bot, event: MessageEvent, state: T_State):
 
 
 @apexzz.handle()
-async def _(bot: Bot, event: MessageEvent, state: T_State):
+async def _(bot: Bot, event: MessageEvent):
     url = f"https://api.mozambiquehe.re/crafting?auth={Tool_Token}"
     dataRet = await GetData(apexdt, url)
     if dataRet[1]:
@@ -165,7 +164,7 @@ async def _(bot: Bot, event: MessageEvent, state: T_State):
 
 
 @apexls.handle()
-async def _(bot: Bot, event: MessageEvent, state: T_State):
+async def _(bot: Bot, event: MessageEvent):
     url = f"https://api.mozambiquehe.re/predator?auth={Tool_Token}"
     dataRet = await GetData(apexdt, url)
     if dataRet[1]:
