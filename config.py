@@ -38,6 +38,7 @@ Map_Dict = {
     "arenas_habitat": "栖息地4",
     "kings_canyon_rotation": "诸王峡谷",
     "arenas_phase_runner": "相位穿梭器",
+    "broken_moon_rotation": "破碎月亮",
 }
 
 # 游戏模式对照
@@ -73,11 +74,16 @@ Legend_Dict = {
     "Mad Maggie": "疯玛吉",
     "Newcastle": "纽卡斯尔",
     "Vantage": "万蒂奇",
+    "Catalyst": "卡特莉丝",
 }
 
 # 追踪器对照
 Tracker = {
     # 赛季
+    "BR Season 16 kills": "第16赛季Apex击杀数",
+    "BR Season 16 wins": "第16赛季Apex胜场数",
+    "BR Season 15 kills": "第15赛季Apex击杀数",
+    "BR Season 15 wins": "第15赛季Apex胜场数",
     "BR Season 14 kills": "第14赛季Apex击杀数",
     "BR Season 14 wins": "第14赛季Apex胜场数",
     "BR Season 13 kills": "第13赛季Apex击杀数",
