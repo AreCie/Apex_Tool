@@ -6,6 +6,7 @@ import os
 import cv2
 from .config import *
 from utils.http_utils import AsyncHttpx
+import numpy as np
 
 
 async def addText(img, size, text, x, y, color=(255, 255, 255)):
@@ -50,7 +51,11 @@ async def isHasImg(path, url):
                 img = cv2.imread(path, 1)
                 cv2.imwrite(path, img, [cv2.IMWRITE_JPEG_QUALITY, 30])
         else:
-            return False
+            # Download failed, use a blank black image
+            img = np.zeros((300, 960, 3), np.uint8)
+            img.fill(0)
+            cv2.imwrite(path, img)
+            logger.info(f"下载失败，使用空白黑色图片【{path}】")
     else:
         logger.info(f"已有图片【{path}】")
     return True
@@ -66,9 +71,24 @@ def loadEAIDJson():
     target_file.close()
     return QQ_EA
 
-
 def writeEAID(js):
     target_file = open(Bind_EAID_JSON, 'w+')
+    json.dump(js, target_file)
+    target_file.close()
+    return
+
+def loadRankJson():
+    target_file = open(Rank_JSON, 'r+')
+    try:
+        Rank_Data = json.load(target_file)
+    except Exception as e:
+        print(e)
+        Rank_Data = {}
+    target_file.close()
+    return Rank_Data
+
+def writeRankData(js):
+    target_file = open(Rank_JSON, 'w+')
     json.dump(js, target_file)
     target_file.close()
     return

@@ -1,7 +1,7 @@
 import os
 
 # API Token
-Tool_Token = "把我替换成自己申请的Token"
+Tool_Token = ""
 
 # 此插件根目录
 Tool_Path = os.path.dirname(__file__)
@@ -9,6 +9,8 @@ Tool_Path = os.path.dirname(__file__)
 Tool_Assets_Path = f"{Tool_Path}/Assets"
 # QQ绑定的EAID的Json文件路径
 Bind_EAID_JSON = f"{Tool_Path}/Assets/QQ_EA_ID.json"
+# EAID的RankJson文件路径
+Rank_JSON = f"{Tool_Path}/Assets/Rank_Data.json"
 # 字体文件路径
 Font_Path = f"{Tool_Assets_Path}/Font.ttf"
 # 地图图片资源目录
@@ -38,7 +40,20 @@ Map_Dict = {
     "arenas_habitat": "栖息地4",
     "kings_canyon_rotation": "诸王峡谷",
     "arenas_phase_runner": "相位穿梭器",
-    "broken_moon_rotation": "破碎月亮",
+    "broken_moon_rotation": "破碎月球",
+    "freedm_tdm_habitat": "栖息地(团队竞技)",
+    "freedm_swat_habitat": "栖息地(死亡之眼-无护盾)",
+    "control_canyonlands_caustic": "诸王峡谷(控制)",
+    "control_tropics_barometer": "晴雨表(控制)",
+    "freedm_tdm_skulltown": "骷髅镇(团队竞技)",
+    "freedm_gungame_wall": "高墙(枪王)",
+    "control_desertlands_siphon": "熔岩虹吸(枪王)",
+    "freedm_tdm_overflow": "熔岩流(团队竞技)",
+    "freedm_swat_overflow": "熔岩流(死亡之眼-无护盾)",
+    "freedm_gungame_skulltown": "骷髅镇(子弹时间)",
+    "freedm_gungame_estates": "不动产(子弹时间)",
+    "freedm_tdm_phase_runner": "相位穿梭器(团队死斗)",
+    "freedm_swat_phase_runner": "相位穿梭器(死亡之眼-无护盾)",
 }
 
 # 游戏模式对照
@@ -48,6 +63,8 @@ GameMode_Dict = {
     "ranked": "排位",
     "arenasRanked": "竞技场排位",
     "control": "控制",
+    "freenom": "枪王模式",
+    "ltm": "娱乐模式",
 }
 
 # 传奇名字对照
@@ -75,13 +92,12 @@ Legend_Dict = {
     "Newcastle": "纽卡斯尔",
     "Vantage": "万蒂奇",
     "Catalyst": "卡特莉丝",
+    "Ballistic": "弹道",
 }
 
 # 追踪器对照
 Tracker = {
     # 赛季
-    "BR Season 16 kills": "第16赛季Apex击杀数",
-    "BR Season 16 wins": "第16赛季Apex胜场数",
     "BR Season 15 kills": "第15赛季Apex击杀数",
     "BR Season 15 wins": "第15赛季Apex胜场数",
     "BR Season 14 kills": "第14赛季Apex击杀数",
@@ -116,7 +132,7 @@ Tracker = {
     # 通用
     "Scout of Action": "侦察行动",
     "Smoke Show": "烟幕表演",
-    "Jackson\\'s Bow Out": "杰克逊的谢幕",
+    "Jackson's Bow Out": "杰克逊的谢幕",
     "Arenas Wins": "竞技场获胜数",
     "Arenas Kills": "竞技场击杀数",
     "Arenas Damage": "竞技场模式伤害",

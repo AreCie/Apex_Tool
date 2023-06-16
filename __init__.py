@@ -6,6 +6,7 @@ from PIL import Image, ImageDraw, ImageFont
 from utils.http_utils import AsyncHttpx
 from .config import *
 from .utils import *
+from datetime import datetime
 import json
 
 __zx_plugin_name__ = "APEX查询工具"
@@ -87,15 +88,15 @@ async def _(bot: Bot, event: MessageEvent):
     if dataRet[1]:
         retdata = json.loads(dataRet[0])  # 地图数据
         tmpimgs = []
-        selMap = ["battle_royale", "arenas", "ranked", "arenasRanked"]
+        selMap = ["battle_royale", "ranked", "ltm"]
         for data in selMap:
             dat = retdata[data]  # 当前游戏模式数据
             current = dat["current"]  # 当前地图
             nextmap = dat["next"]  # 下一地图
 
-            await isHasImg(f"{Map_Path}/{current['code']}.jpg", current["asset"])  # 当前地图图片
+            await isHasImg(f"{Map_Path}/{current['map']}.jpg", current["asset"])  # 当前地图图片
 
-            im = Image.open(f"{Map_Path}/{current['code']}.jpg")
+            im = Image.open(f"{Map_Path}/{current['map']}.jpg")
             x, y = im.size
             im = im.resize((960, 300), Image.ANTIALIAS)
 
@@ -103,16 +104,15 @@ async def _(bot: Bot, event: MessageEvent):
             await addText(im, 60, Map_Dict[current['code']] if current['code'] in Map_Dict else current['map'], 20,
                           90)  # 地图名称
             await addText(im, 30, f"剩余时间：{current['remainingTimer']}", 20, 170)
-            await addText(im, 30,
-                          f"下一轮换：{Map_Dict[nextmap['code']] if nextmap['code'] in Map_Dict else nextmap['map']}",
-                          20, 220)
+            await addText(im, 30, f"下一轮换：{Map_Dict.get(nextmap.get('code', '未知地图'), '未知地图')}", 20, 220)
+
 
             tmpimg = f'{Temp_Path}/{data}_{current["code"]}.jpg'
             tmpimgs.append(tmpimg)
             im.save(tmpimg)
 
         # 设置画布(格式，尺寸，背景色)
-        image = Image.new('RGB', (960, 1200), (255, 255, 255))
+        image = Image.new('RGB', (960, 900), (255, 255, 255))
         for i, img in enumerate(tmpimgs):
             image.paste(Image.open(img), (0, i * 300))
 
@@ -222,6 +222,7 @@ async def _(bot: Bot, event: Event, text: Message = CommandArg()):
 async def _(bot: Bot, event: Event, text: Message = CommandArg()):
     args = []
     uid = ""
+    lastRankCheck = False
 
     if len(text) > 0:
         args = text[0].data['text'].split(' ')
@@ -235,11 +236,22 @@ async def _(bot: Bot, event: Event, text: Message = CommandArg()):
             await apexcx.send(f'{QQ}未绑定EA账号!如需绑定，请回复\na绑定 你的Origin_ID')
             return
         uid = QQ_EA[QQ]
-    print(uid)
+    #print(uid)
     url = f"https://api.mozambiquehe.re/bridge?auth={Tool_Token}&player={uid}&platform=PC"
     dataRet = await GetData(apexdt, url)
     if dataRet[1]:
         response = json.loads(dataRet[0])
+
+        Rank_Data = loadRankJson()
+        uidnum = response["global"]["uid"]
+        if Rank_Data.get(uidnum) is None:
+            Rank_Data[uidnum] = {}  # 如果uid不存在于Rank_Data中，创建一个空字典
+            lastRankCheck = False
+        else:
+            lastScore = Rank_Data[uidnum].get('rankScore')  # 使用.get()方法获取rankScore的值
+            lastScore = Rank_Data[uidnum].get('rankScore')  # 使用.get()方法获取rankScore的值
+            lastTime = Rank_Data[uidnum].get('time')  # 使用.get()方法获取time的值
+            lastRankCheck = True
 
         rankPimg = ""
         arenaPimg = ""
@@ -276,8 +288,23 @@ async def _(bot: Bot, event: Event, text: Message = CommandArg()):
 
                 await addText(img, 40, f"{rname[1]}：{rankScore}", ix, iy)
                 await addText(img, 40, f"猎杀排名：{str(ladderPosPlatform) if ladderPosPlatform > 0 else '无'}", ix, iy + 50)
+                if lastRankCheck:
+                    if rk == 1:
+                        if rankScore - lastScore != 0:
+                            await addText(img, 40, f"上次分数：{lastScore}", 765, 700)
+                            await addText(img, 40, f"分数变动：{rankScore - lastScore}", 765, 750)
+                        else:
+                            await addText(img, 40, f"分数变动：{rankScore - lastScore}", 765, 700)
 
             realtime = response["realtime"]
+            now = datetime.now()
+            thisTime = now.strftime("%Y-%m-%d %H:%M")
+            if lastRankCheck:
+                await addText(img, 40, "上次查询：", 680, 800)
+                await addText(img, 40, lastTime, 900, 800)
+
+            await addText(img, 40, "查询时间：", 680, 850)
+            await addText(img, 40, thisTime, 900, 850)
             await addText(img, 40, "当前状态：", 680, 900)
             await addText(img, 40, "在线" if realtime["isOnline"] else "离线", 900, 900)
             await addText(img, 40, "正在游戏" if realtime["isInGame"] else "未在游戏", 1070, 900)
@@ -314,6 +341,16 @@ async def _(bot: Bot, event: Event, text: Message = CommandArg()):
             img.save(f"{Temp_Path}/{uid}_info.jpg")
             image_file = f"file:///{Temp_Path}/{uid}_info.jpg"
             msg = f"[CQ:image,file={image_file}]"
+
+            try:
+                Rank_Data[uidnum]['name'] = uid
+                Rank_Data[uidnum]['time'] = thisTime
+                Rank_Data[uidnum]['rankScore'] = rankScore
+                writeRankData(Rank_Data)
+            except Exception as e:
+                await SendMsg(bot, event, f"RandData出错啦!\n错误信息：{e}")
+                logger.info(e)
+                
             # await bot.send_group_msg(group_id=event.group_id, message=msg)
             await SendMsg(bot, event, msg)
         except Exception as e:
