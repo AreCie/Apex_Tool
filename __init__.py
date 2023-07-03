@@ -48,7 +48,18 @@ async def GetData(bot: Bot, url: str):
         code = res.status_code
         logger.info(f'请求{url}时返回的状态码:【{code}】')
         if res.is_error:
-            await bot.send(f"API请求出错，请稍后再试吧>w<")
+            if code == 400:
+                await bot.send(f"API请求出错，请稍后再试吧>w<")
+            elif code == 403:
+                await bot.send(f"【403】API密钥出错，请联系管理员修复>w<")
+            elif code == 404:
+                await bot.send(f"未找到该玩家，请检查名称后重试>w<")
+            elif code == 405:
+                await bot.send(f"【405】外部API错误，请联系管理员修复>w<")
+            elif code == 410:
+                await bot.send(f"未知平台，请联系管理员修复>w<")
+            elif code == 429:
+                await bot.send(f"API速率限制，请稍后再试吧>w<")
         else:
             if code == 200:
                 logger.info(f'获取【{url}】数据成功')
