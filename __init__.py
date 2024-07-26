@@ -25,17 +25,17 @@ usage：
 """.strip()
 __plugin_des__ = "查询APEX地图轮换、制造机轮换、猎杀信息、玩家信息"
 __plugin_cmd__ = ["a地图", "a制造", "a猎杀", "a绑定 烂橘子ID", "a查询/a查询 [烂橘子ID]"]
-__plugin_version__ = 1.5
+__plugin_version__ = 1.8
 __plugin_author__ = "AreCie"
 __plugin_settings__ = {
     "cmd": ["派派", "派", "Apex", "apex", "APEX"]
 }
 
-apexdt = on_command("a地图", priority=5, block=True)
-apexzz = on_command("a制造", priority=5, block=True)
-apexls = on_command("a猎杀", priority=5, block=True)
-apexcx = on_command("a查询", priority=5, block=True)
-apexbind = on_command("a绑定", priority=5, block=True)
+apexdt = on_command("a地图", aliases={"A地图"}, priority=5, block=True)
+apexzz = on_command("a制造", aliases={"A制造"}, priority=5, block=True)
+apexls = on_command("a猎杀", aliases={"A猎杀"}, priority=5, block=True)
+apexcx = on_command("a查询", aliases={"A查询"}, priority=5, block=True)
+apexbind = on_command("a绑定", aliases={"A绑定"}, priority=5, block=True)
 apexhelp = on_command("派命令", aliases={"a帮助", "a命令", "派帮助"}, priority=5, block=True)
 
 
@@ -53,7 +53,10 @@ async def GetData(bot: Bot, url: str):
             elif code == 403:
                 await bot.send(f"【403】API密钥出错，请联系管理员修复>w<")
             elif code == 404:
-                await bot.send(f"未找到该玩家，请检查名称后重试>w<")
+                if "API key doesn't exist !" in res.text:
+                    await bot.send(f"API请求出错，未填入API Token！")
+                else:
+                    await bot.send(f"未找到该玩家，请检查名称后重试>w<")
             elif code == 405:
                 await bot.send(f"【405】外部API错误，请联系管理员修复>w<")
             elif code == 410:
@@ -63,16 +66,19 @@ async def GetData(bot: Bot, url: str):
         else:
             if code == 200:
                 logger.info(f'获取【{url}】数据成功')
-                tempJson = json.loads(res.text)
-                if 'Error' in tempJson:
-                    logger.info(f'错误数据：{tempJson}')
-                    if 'Player' in tempJson['Error'] and 'not found' in tempJson['Error']:
-                        await bot.send(f"未找到该玩家信息，请检查烂橘子ID的正确性")
-                    else:
-                        await bot.send(f"API请求出错，错误下信息：{tempJson['Error']}")
+                if 'Unauthorized format' in res.text:
+                    await bot.send(f"API请求出错，未填入API Token！")
                 else:
-                    isSucc = True
-                    text = res.text
+                    tempJson = json.loads(res.text)
+                    if 'Error' in tempJson:
+                        logger.info(f'错误数据：{tempJson}')
+                        if 'Player' in tempJson['Error'] and 'not found' in tempJson['Error']:
+                            await bot.send(f"未找到该玩家信息，请检查烂橘子ID的正确性")
+                        else:
+                            await bot.send(f"API请求出错，错误下信息：{tempJson['Error']}")
+                    else:
+                        isSucc = True
+                        text = res.text
             else:
                 await bot.send(f"API请求出错，状态码{code}")
     except Exception as e:
@@ -116,7 +122,6 @@ async def _(bot: Bot, event: MessageEvent):
                           90)  # 地图名称
             await addText(im, 30, f"剩余时间：{current['remainingTimer']}", 20, 170)
             await addText(im, 30, f"下一轮换：{Map_Dict.get(nextmap.get('code', '未知地图'), '未知地图')}", 20, 220)
-
 
             tmpimg = f'{Temp_Path}/{data}_{current["code"]}.jpg'
             tmpimgs.append(tmpimg)
@@ -247,7 +252,7 @@ async def _(bot: Bot, event: Event, text: Message = CommandArg()):
             await apexcx.send(f'{QQ}未绑定EA账号!如需绑定，请回复\na绑定 你的Origin_ID')
             return
         uid = QQ_EA[QQ]
-    #print(uid)
+    # print(uid)
     url = f"https://api.mozambiquehe.re/bridge?auth={Tool_Token}&player={uid}&platform=PC"
     dataRet = await GetData(apexdt, url)
     if dataRet[1]:
@@ -298,7 +303,8 @@ async def _(bot: Bot, event: Event, text: Message = CommandArg()):
                 ladderPosPlatform = rank["ladderPosPlatform"]
 
                 await addText(img, 40, f"{rname[1]}：{rankScore}", ix, iy)
-                await addText(img, 40, f"猎杀排名：{str(ladderPosPlatform) if ladderPosPlatform > 0 else '无'}", ix, iy + 50)
+                await addText(img, 40, f"猎杀排名：{str(ladderPosPlatform) if ladderPosPlatform > 0 else '无'}", ix,
+                              iy + 50)
                 if lastRankCheck:
                     if rk == 1:
                         if rankScore - lastScore != 0:
@@ -361,7 +367,7 @@ async def _(bot: Bot, event: Event, text: Message = CommandArg()):
             except Exception as e:
                 await SendMsg(bot, event, f"RandData出错啦!\n错误信息：{e}")
                 logger.info(e)
-                
+
             # await bot.send_group_msg(group_id=event.group_id, message=msg)
             await SendMsg(bot, event, msg)
         except Exception as e:
