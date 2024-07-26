@@ -63,6 +63,8 @@ async def GetData(bot: Bot, url: str):
                 await bot.send(f"未知平台，请联系管理员修复>w<")
             elif code == 429:
                 await bot.send(f"API速率限制，请稍后再试吧>w<")
+            elif code == 503:
+                await bot.send(f"似乎API服务器不可用，请稍后再试吧")
         else:
             if code == 200:
                 logger.info(f'获取【{url}】数据成功')
