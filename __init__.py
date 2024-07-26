@@ -135,7 +135,7 @@ async def _(bot: Bot, event: MessageEvent):
         tmpMapPath = f"{Temp_Path}/map_ok.jpg"  # 地图路径
         logger.info(f"保存地图【{tmpMapPath}】")
         image.save(tmpMapPath)
-        image_file = f"file:///{tmpMapPath}"
+        image_file = f"file://{tmpMapPath}"
 
         msg = f"[CQ:image,file={image_file}]"
         try:
@@ -168,7 +168,7 @@ async def _(bot: Bot, event: MessageEvent):
         await addText(image, 50, "当日", 350, 345)
         await addText(image, 50, "本周", 350, 405)
         image.save(f"{Temp_Path}/mark_ok.jpg")
-        image_file = f"file:///{Temp_Path}/mark_ok.jpg"
+        image_file = f"file://{Temp_Path}/mark_ok.jpg"
         msg = f"[CQ:image,file={image_file}]"
         try:
             # await bot.send_group_msg(group_id=event.group_id, message=msg)
@@ -200,7 +200,7 @@ async def _(bot: Bot, event: MessageEvent):
                     await addText(ls, 40, f"大师总数：{rankTotal}", x, y + 100)
             ls = ls.convert('RGB')
             ls.save(f"{Temp_Path}/ls_ok.jpg")
-            image_file = f"file:///{Temp_Path}/ls_ok.jpg"
+            image_file = f"file://{Temp_Path}/ls_ok.jpg"
             msg = f"[CQ:image,file={image_file}]"
             # await bot.send_group_msg(group_id=event.group_id, message=msg)
             await SendMsg(bot, event, msg)
@@ -265,7 +265,6 @@ async def _(bot: Bot, event: Event, text: Message = CommandArg()):
             lastRankCheck = False
         else:
             lastScore = Rank_Data[uidnum].get('rankScore')  # 使用.get()方法获取rankScore的值
-            lastScore = Rank_Data[uidnum].get('rankScore')  # 使用.get()方法获取rankScore的值
             lastTime = Rank_Data[uidnum].get('time')  # 使用.get()方法获取time的值
             lastRankCheck = True
 
@@ -281,8 +280,9 @@ async def _(bot: Bot, event: Event, text: Message = CommandArg()):
             levWid = 780 if user["level"] >= 200 else 785 if user["level"] >= 100 else 790 if user[
                                                                                                   "level"] >= 10 else 795
             await addText(img, 32, str(user["level"] if user["level"] < 500 else 500), levWid, 216, (0, 0, 0))  # 添加等级
-            for rk in range(2):
-                rname = ["rank", "排位"] if rk == 1 else ["arena", "竞技场"]
+            for rk in range(1):
+                # 若双排位归来，则将此处range改为2
+                rname = ["rank", "排位"] if rk == 0 else ["arena", "竞技场"]
                 rank = user[rname[0]]
                 rankName = rank["rankName"]
                 rankDiv = rank["rankDiv"]
@@ -294,11 +294,13 @@ async def _(bot: Bot, event: Event, text: Message = CommandArg()):
                 rimgdraw = rimgdraw.resize((250, 250), Image.ANTIALIAS)
                 rimgdraw.save(rimgPath)
 
-                if rk == 1:
+                if rk == 0:
                     rankPimg = rimgPath
                 else:
                     arenaPimg = rimgPath
-                ix, iy = (765, 600) if rk == 1 else (1200, 600)
+                ix, iy = (982, 600)
+                # ix, iy = (765, 600) if rk == 0 else (1200, 600)
+                # 此处注释为双排位
                 rankScore = rank["rankScore"]
                 ladderPosPlatform = rank["ladderPosPlatform"]
 
@@ -306,12 +308,12 @@ async def _(bot: Bot, event: Event, text: Message = CommandArg()):
                 await addText(img, 40, f"猎杀排名：{str(ladderPosPlatform) if ladderPosPlatform > 0 else '无'}", ix,
                               iy + 50)
                 if lastRankCheck:
-                    if rk == 1:
+                    if rk == 0:
                         if rankScore - lastScore != 0:
-                            await addText(img, 40, f"上次分数：{lastScore}", 765, 700)
-                            await addText(img, 40, f"分数变动：{rankScore - lastScore}", 765, 750)
+                            await addText(img, 40, f"上次分数：{lastScore}", ix, iy + 100)
+                            await addText(img, 40, f"分数变动：{rankScore - lastScore}", ix, iy + 150)
                         else:
-                            await addText(img, 40, f"分数变动：{rankScore - lastScore}", 765, 700)
+                            await addText(img, 40, f"分数变动：{rankScore - lastScore}", ix, iy + 100)
 
             realtime = response["realtime"]
             now = datetime.now()
@@ -349,14 +351,12 @@ async def _(bot: Bot, event: Event, text: Message = CommandArg()):
 
             icoPimgh = Image.open(iconPath).convert("RGBA")
             rankPimgh = Image.open(rankPimg).convert("RGBA")
-            arenaPimgh = Image.open(arenaPimg).convert("RGBA")
 
-            img.paste(rankPimgh, (760, 320), mask=rankPimgh)
-            img.paste(arenaPimgh, (1200, 320), mask=arenaPimgh)
+            img.paste(rankPimgh, (980, 320), mask=rankPimgh)
             img.paste(icoPimgh, (0, 270), mask=icoPimgh)
             img = img.convert('RGB')
             img.save(f"{Temp_Path}/{uid}_info.jpg")
-            image_file = f"file:///{Temp_Path}/{uid}_info.jpg"
+            image_file = f"file://{Temp_Path}/{uid}_info.jpg"
             msg = f"[CQ:image,file={image_file}]"
 
             try:
