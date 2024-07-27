@@ -93,6 +93,8 @@ Legend_Dict = {
     "Vantage": "万蒂奇",
     "Catalyst": "卡特莉丝",
     "Ballistic": "弹道",
+    "Conduit": "导线管",
+    "Alter": "变换",
 }
 
 # 追踪器对照

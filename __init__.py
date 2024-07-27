@@ -25,17 +25,17 @@ usage：
 """.strip()
 __plugin_des__ = "查询APEX地图轮换、制造机轮换、猎杀信息、玩家信息"
 __plugin_cmd__ = ["a地图", "a制造", "a猎杀", "a绑定 烂橘子ID", "a查询/a查询 [烂橘子ID]"]
-__plugin_version__ = 1.5
+__plugin_version__ = 1.8
 __plugin_author__ = "AreCie"
 __plugin_settings__ = {
     "cmd": ["派派", "派", "Apex", "apex", "APEX"]
 }
 
-apexdt = on_command("a地图", priority=5, block=True)
-apexzz = on_command("a制造", priority=5, block=True)
-apexls = on_command("a猎杀", priority=5, block=True)
-apexcx = on_command("a查询", priority=5, block=True)
-apexbind = on_command("a绑定", priority=5, block=True)
+apexdt = on_command("a地图", aliases={"A地图"}, priority=5, block=True)
+apexzz = on_command("a制造", aliases={"A制造"}, priority=5, block=True)
+apexls = on_command("a猎杀", aliases={"A猎杀"}, priority=5, block=True)
+apexcx = on_command("a查询", aliases={"A查询"}, priority=5, block=True)
+apexbind = on_command("a绑定", aliases={"A绑定"}, priority=5, block=True)
 apexhelp = on_command("派命令", aliases={"a帮助", "a命令", "派帮助"}, priority=5, block=True)
 
 
@@ -53,26 +53,34 @@ async def GetData(bot: Bot, url: str):
             elif code == 403:
                 await bot.send(f"【403】API密钥出错，请联系管理员修复>w<")
             elif code == 404:
-                await bot.send(f"未找到该玩家，请检查名称后重试>w<")
+                if "API key doesn't exist !" in res.text:
+                    await bot.send(f"API请求出错，未填入API Token！")
+                else:
+                    await bot.send(f"未找到该玩家，请检查名称后重试>w<")
             elif code == 405:
                 await bot.send(f"【405】外部API错误，请联系管理员修复>w<")
             elif code == 410:
                 await bot.send(f"未知平台，请联系管理员修复>w<")
             elif code == 429:
                 await bot.send(f"API速率限制，请稍后再试吧>w<")
+            elif code == 503:
+                await bot.send(f"似乎API服务器不可用，请稍后再试吧")
         else:
             if code == 200:
                 logger.info(f'获取【{url}】数据成功')
-                tempJson = json.loads(res.text)
-                if 'Error' in tempJson:
-                    logger.info(f'错误数据：{tempJson}')
-                    if 'Player' in tempJson['Error'] and 'not found' in tempJson['Error']:
-                        await bot.send(f"未找到该玩家信息，请检查烂橘子ID的正确性")
-                    else:
-                        await bot.send(f"API请求出错，错误下信息：{tempJson['Error']}")
+                if 'Unauthorized format' in res.text:
+                    await bot.send(f"API请求出错，未填入API Token！")
                 else:
-                    isSucc = True
-                    text = res.text
+                    tempJson = json.loads(res.text)
+                    if 'Error' in tempJson:
+                        logger.info(f'错误数据：{tempJson}')
+                        if 'Player' in tempJson['Error'] and 'not found' in tempJson['Error']:
+                            await bot.send(f"未找到该玩家信息，请检查烂橘子ID的正确性")
+                        else:
+                            await bot.send(f"API请求出错，错误下信息：{tempJson['Error']}")
+                    else:
+                        isSucc = True
+                        text = res.text
             else:
                 await bot.send(f"API请求出错，状态码{code}")
     except Exception as e:
@@ -117,7 +125,6 @@ async def _(bot: Bot, event: MessageEvent):
             await addText(im, 30, f"剩余时间：{current['remainingTimer']}", 20, 170)
             await addText(im, 30, f"下一轮换：{Map_Dict.get(nextmap.get('code', '未知地图'), '未知地图')}", 20, 220)
 
-
             tmpimg = f'{Temp_Path}/{data}_{current["code"]}.jpg'
             tmpimgs.append(tmpimg)
             im.save(tmpimg)
@@ -130,7 +137,7 @@ async def _(bot: Bot, event: MessageEvent):
         tmpMapPath = f"{Temp_Path}/map_ok.jpg"  # 地图路径
         logger.info(f"保存地图【{tmpMapPath}】")
         image.save(tmpMapPath)
-        image_file = f"file:///{tmpMapPath}"
+        image_file = f"file://{tmpMapPath}"
 
         msg = f"[CQ:image,file={image_file}]"
         try:
@@ -163,7 +170,7 @@ async def _(bot: Bot, event: MessageEvent):
         await addText(image, 50, "当日", 350, 345)
         await addText(image, 50, "本周", 350, 405)
         image.save(f"{Temp_Path}/mark_ok.jpg")
-        image_file = f"file:///{Temp_Path}/mark_ok.jpg"
+        image_file = f"file://{Temp_Path}/mark_ok.jpg"
         msg = f"[CQ:image,file={image_file}]"
         try:
             # await bot.send_group_msg(group_id=event.group_id, message=msg)
@@ -195,7 +202,7 @@ async def _(bot: Bot, event: MessageEvent):
                     await addText(ls, 40, f"大师总数：{rankTotal}", x, y + 100)
             ls = ls.convert('RGB')
             ls.save(f"{Temp_Path}/ls_ok.jpg")
-            image_file = f"file:///{Temp_Path}/ls_ok.jpg"
+            image_file = f"file://{Temp_Path}/ls_ok.jpg"
             msg = f"[CQ:image,file={image_file}]"
             # await bot.send_group_msg(group_id=event.group_id, message=msg)
             await SendMsg(bot, event, msg)
@@ -247,7 +254,7 @@ async def _(bot: Bot, event: Event, text: Message = CommandArg()):
             await apexcx.send(f'{QQ}未绑定EA账号!如需绑定，请回复\na绑定 你的Origin_ID')
             return
         uid = QQ_EA[QQ]
-    #print(uid)
+    # print(uid)
     url = f"https://api.mozambiquehe.re/bridge?auth={Tool_Token}&player={uid}&platform=PC"
     dataRet = await GetData(apexdt, url)
     if dataRet[1]:
@@ -259,7 +266,6 @@ async def _(bot: Bot, event: Event, text: Message = CommandArg()):
             Rank_Data[uidnum] = {}  # 如果uid不存在于Rank_Data中，创建一个空字典
             lastRankCheck = False
         else:
-            lastScore = Rank_Data[uidnum].get('rankScore')  # 使用.get()方法获取rankScore的值
             lastScore = Rank_Data[uidnum].get('rankScore')  # 使用.get()方法获取rankScore的值
             lastTime = Rank_Data[uidnum].get('time')  # 使用.get()方法获取time的值
             lastRankCheck = True
@@ -276,8 +282,9 @@ async def _(bot: Bot, event: Event, text: Message = CommandArg()):
             levWid = 780 if user["level"] >= 200 else 785 if user["level"] >= 100 else 790 if user[
                                                                                                   "level"] >= 10 else 795
             await addText(img, 32, str(user["level"] if user["level"] < 500 else 500), levWid, 216, (0, 0, 0))  # 添加等级
-            for rk in range(2):
-                rname = ["rank", "排位"] if rk == 1 else ["arena", "竞技场"]
+            for rk in range(1):
+                # 若双排位归来，则将此处range改为2
+                rname = ["rank", "排位"] if rk == 0 else ["arena", "竞技场"]
                 rank = user[rname[0]]
                 rankName = rank["rankName"]
                 rankDiv = rank["rankDiv"]
@@ -289,23 +296,26 @@ async def _(bot: Bot, event: Event, text: Message = CommandArg()):
                 rimgdraw = rimgdraw.resize((250, 250), Image.ANTIALIAS)
                 rimgdraw.save(rimgPath)
 
-                if rk == 1:
+                if rk == 0:
                     rankPimg = rimgPath
                 else:
                     arenaPimg = rimgPath
-                ix, iy = (765, 600) if rk == 1 else (1200, 600)
+                ix, iy = (982, 600)
+                # ix, iy = (765, 600) if rk == 0 else (1200, 600)
+                # 此处注释为双排位
                 rankScore = rank["rankScore"]
                 ladderPosPlatform = rank["ladderPosPlatform"]
 
                 await addText(img, 40, f"{rname[1]}：{rankScore}", ix, iy)
-                await addText(img, 40, f"猎杀排名：{str(ladderPosPlatform) if ladderPosPlatform > 0 else '无'}", ix, iy + 50)
+                await addText(img, 40, f"猎杀排名：{str(ladderPosPlatform) if ladderPosPlatform > 0 else '无'}", ix,
+                              iy + 50)
                 if lastRankCheck:
-                    if rk == 1:
+                    if rk == 0:
                         if rankScore - lastScore != 0:
-                            await addText(img, 40, f"上次分数：{lastScore}", 765, 700)
-                            await addText(img, 40, f"分数变动：{rankScore - lastScore}", 765, 750)
+                            await addText(img, 40, f"上次分数：{lastScore}", ix, iy + 100)
+                            await addText(img, 40, f"分数变动：{rankScore - lastScore}", ix, iy + 150)
                         else:
-                            await addText(img, 40, f"分数变动：{rankScore - lastScore}", 765, 700)
+                            await addText(img, 40, f"分数变动：{rankScore - lastScore}", ix, iy + 100)
 
             realtime = response["realtime"]
             now = datetime.now()
@@ -343,14 +353,12 @@ async def _(bot: Bot, event: Event, text: Message = CommandArg()):
 
             icoPimgh = Image.open(iconPath).convert("RGBA")
             rankPimgh = Image.open(rankPimg).convert("RGBA")
-            arenaPimgh = Image.open(arenaPimg).convert("RGBA")
 
-            img.paste(rankPimgh, (760, 320), mask=rankPimgh)
-            img.paste(arenaPimgh, (1200, 320), mask=arenaPimgh)
+            img.paste(rankPimgh, (980, 320), mask=rankPimgh)
             img.paste(icoPimgh, (0, 270), mask=icoPimgh)
             img = img.convert('RGB')
             img.save(f"{Temp_Path}/{uid}_info.jpg")
-            image_file = f"file:///{Temp_Path}/{uid}_info.jpg"
+            image_file = f"file://{Temp_Path}/{uid}_info.jpg"
             msg = f"[CQ:image,file={image_file}]"
 
             try:
@@ -361,7 +369,7 @@ async def _(bot: Bot, event: Event, text: Message = CommandArg()):
             except Exception as e:
                 await SendMsg(bot, event, f"RandData出错啦!\n错误信息：{e}")
                 logger.info(e)
-                
+
             # await bot.send_group_msg(group_id=event.group_id, message=msg)
             await SendMsg(bot, event, msg)
         except Exception as e:
